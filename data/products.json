@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Zanella Ciclo 50",
+    "price": 500,
+    "id": 1
+  },
+  {
+    "name": "Zanella Sol 90",
+    "price": 1000,
+    "id": 2
+  },
+  {
+    "name": "Susuki AX 100",
+    "price": 1500,
+    "id": 3
+  }
+]
