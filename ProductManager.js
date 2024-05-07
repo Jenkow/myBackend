@@ -33,7 +33,7 @@ class ProductManager {
             let data_json = JSON.stringify(this.products,null,2);
             await fs.promises.writeFile(this.path, data_json);
             console.log('created product id: '+ data.id);
-            return ('product id: '+ data.id);
+            return data;
         } catch (error){
             console.log(error);
             return ("addProduct: error");
@@ -67,7 +67,7 @@ class ProductManager {
         }
     }
 
-    async update_product(id, data) {
+    async updateProduct(id, data) {
         try {
             let one = this.getProductById(id);
             for (let prop in data) {
@@ -83,7 +83,7 @@ class ProductManager {
         }
     }
 
-    async destroy_product(id) {
+    async destroyProduct(id) {
         try {
             this.products = this.products.filter(each => each.id!==id);
             let data_json = JSON.stringify(this.products,null,2);
@@ -98,17 +98,5 @@ class ProductManager {
 }
 
 let manager = new ProductManager('./data/products.json')
-
-async function manage() {
-    await manager.addProduct({ name:'Zanella Ciclo 50', price: 500, stock: 6 })
-    await manager.addProduct({ name:'Zanella Sol 90', price: 1000, stock: 3 })
-    await manager.addProduct({ name:'Susuki AX', price: 2000, stock: 10 })
-    await manager.addProduct({ name:'test 1', price: 1000 })
-    await manager.addProduct({ name:'test 2', price: 1000 })
-    await manager.update_product(3, {name: 'Susuki AX 100', price: 1500})
-    await manager.destroy_product(4)
-    await manager.destroy_product(5)
-}
-manage()
 
 export default manager;

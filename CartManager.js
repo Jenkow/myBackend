@@ -34,7 +34,7 @@ class CartManager {
             let data_json = JSON.stringify(this.carts, null, 2);
             await fs.promises.writeFile(this.path, data_json);
             console.log('created cart id: ' + data.id);
-            return ('cart id: ' + data.id);
+            return (data);
         } catch (error) {
             console.log(error);
             return ("addCart: error")
@@ -70,13 +70,5 @@ class CartManager {
 }
 
 let manager = new CartManager('./data/carts.json')
-
-//async function manage() {
-//    await manager.addCart()
-//    await manager.addCart()
-//    await manager.addCart()
-//    await manager.addCart()
-//    await manager.addCart()
-//}
 
 export default manager;
