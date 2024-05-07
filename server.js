@@ -17,22 +17,6 @@ let index_function = (req, res) => {
 
 server.get('/', index_function);
 
-server.get('/api/products/:pid', (req, res) => {
-    let pid = Number(req.params.pid);
-    let product = productManager.getProductById(pid);
-    if (product) {
-        return res.send({
-            success: true,
-            response: product
-        })
-    } else {
-        return res.send({
-            success: false,
-            response: {}
-        })
-    }
-})
-
 server.get('/api/products', (req,res) => {
     let products = productManager.getProducts();
     let limit = Number(req.query.limit ?? products.length);
@@ -46,6 +30,22 @@ server.get('/api/products', (req,res) => {
         return res.send({
             success: false,
             products: 'not found'
+        })
+    }
+})
+
+server.get('/api/products/:pid', (req, res) => {
+    let pid = Number(req.params.pid);
+    let product = productManager.getProductById(pid);
+    if (product) {
+        return res.send({
+            success: true,
+            response: product
+        })
+    } else {
+        return res.send({
+            success: false,
+            response: {}
         })
     }
 })
