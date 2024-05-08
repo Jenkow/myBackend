@@ -67,6 +67,60 @@ class CartManager {
             return 'getCartById: error';
         }
     }
+
+    async addProduct(cid, pid, quantity) {
+        try {
+            let cart = this.getCartById(cid);
+            if (cart) {
+                let product = cart.products.find(each => each.pid === pid)
+                if (product) {
+                    product.quantity += quantity;
+                } else {
+                    cart.products.push({ pid, quantity })
+                }
+                let data_json = JSON.stringify(this.carts, null, 2);
+                await fs.promises.writeFile(this.path, data_json);
+                return cart;
+            } else {
+                console.log('cart not found');
+                return undefined
+            }
+        } catch (error) {
+            console.log(error)
+            return 'error: addProduct'
+        }
+    }
+
+    async deleteProduct(cid, pid) {
+        try {
+            let cart = this.getCartById(cid);
+            if (cart) {
+                cart.products = cart.products.filter(each => each.pid !== pid);
+                let data_json = JSON.stringify(this.carts, null, 2);
+                await fs.promises.writeFile(this.path, data_json);
+                return;
+            } else {
+                console.log('cart not found');
+                return 'cart not found'
+            }
+        } catch (error) {
+            console.log(error);
+            return 'error: deleteProduct'
+        }
+    }
+
+    async deleteCart(cid) {
+        try {
+            let cart = this.getCartById(cid)
+            this.carts = this.carts.filter(each => each.id !== cid);
+            let data_json = JSON.stringify(this.carts, null, 2);
+            await fs.promises.writeFile(this.path, data_json);
+            return cart
+        } catch (error) {
+            console.log(error)
+            return 'error: deleteCart'
+        }
+    }
 }
 
 let manager = new CartManager('./data/carts.json')

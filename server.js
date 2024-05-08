@@ -153,7 +153,7 @@ server.get('/api/carts/:cid', (req, res) => {
     let cid = Number(req.params.cid);
     let cart = cartManager.getCartById(cid);
     if (cart) {
-        return res.send({
+        return res.json({
             success: true,
             response: cart
         })
@@ -177,6 +177,73 @@ server.post('/api/carts', async (req, res) => {
         return res.json({
             status: 500,
             response: 'error'
+        })
+    }
+})
+
+server.put('/api/carts/:cid/:pid', async (req, res) => {
+    try {
+        let cid = Number(req.params.cid) ?? null;
+        let pid = Number(req.params.pid) ?? null;
+        let quantity = Number(req.body.quantity) ?? null;
+        if (cid && pid && quantity) {
+            let cart = await cartManager.addProduct(cid, pid, quantity);
+            if (cart) {
+                return res.json({
+                    status: 200,
+                    response: `${quantity}x product (pid: ${pid}) added to cart (cid: ${cid})`
+                })
+            } else {
+                return res.json({
+                    status: 400,
+                    response: 'cart not found'
+                })
+            }
+        } else {
+            return res.json({
+                status: 400,
+                response: 'check data'
+            })
+        }
+    } catch (error) {
+        console.log(error);
+        return res.json({
+            status: 500,
+            response: 'error'
+        })
+    }
+
+})
+
+server.delete('/api/carts/:cid/:pid', (req, res) => {
+    let cid = Number(req.params.cid) ?? null;
+    let pid = Number(req.params.pid) ?? null;
+    if (cid && pid) {
+        cartManager.deleteProduct(cid, pid);
+        return res.json({
+            status: 200,
+            response: `product (pid: ${pid}) deleted from cart (cid: ${cid})`
+        })
+    } else {
+        return res.json({
+            status: 400,
+            response: 'check data'
+        })
+    }
+})
+
+server.delete('/api/carts/:cid', (req, res) => {
+    let cid = Number(req.params.cid) ?? null;
+    if (cid) {
+        cartManager.deleteCart(cid);
+        return res.json({
+            status: 200,
+            response: `cart (cid: ${cid}) deleted`
+        })
+    } else {
+        return res.json({
+            status: 400,
+            response: 'check data'
         })
     }
 })
