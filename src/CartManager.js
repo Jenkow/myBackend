@@ -1,4 +1,5 @@
 import fs from 'fs';
+import productManager from './ProductManager.js'
 
 class CartManager {
     constructor(path) {
@@ -91,11 +92,16 @@ class CartManager {
         }
     }
 
-    async deleteProduct(cid, pid) {
+    async deleteProduct(cid, pid, quantity) {
         try {
             let cart = this.getCartById(cid);
             if (cart) {
-                cart.products = cart.products.filter(each => each.pid !== pid);
+                let product = cart.products.find(each => each.pid === pid);
+                if (product && product.quantity > quantity) {
+                    product.quantity -= quantity;
+                } else {
+                    cart.products = cart.products.filter(each => each.pid !== pid);
+                }
                 let data_json = JSON.stringify(this.carts, null, 2);
                 await fs.promises.writeFile(this.path, data_json);
                 return;
