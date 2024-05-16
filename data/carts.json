@@ -3,8 +3,8 @@
     "id": 1,
     "products": [
       {
-        "pid": 3,
-        "quantity": 2
+        "pid": 5,
+        "quantity": 6
       }
     ]
   },
@@ -13,7 +13,11 @@
     "products": [
       {
         "pid": 7,
-        "quantity": 1
+        "quantity": 5
+      },
+      {
+        "pid": 2,
+        "quantity": 2
       }
     ]
   },

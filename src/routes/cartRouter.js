@@ -62,18 +62,12 @@ router.put('/:cid/product/:pid/:units', async (req, res) => {
                     status: 200,
                     response: `${quantity}x product (pid: ${pid}) added to cart (cid: ${cid})`
                 })
-            } else {
-                return res.json({
-                    status: 400,
-                    response: 'cart not found'
-                })
             }
-        } else {
-            return res.json({
-                status: 400,
-                response: 'check data'
-            })
         }
+        return res.json({
+            status: 400,
+            response: 'check data'
+        })
     } catch (error) {
         console.log(error);
         return res.json({
@@ -84,20 +78,29 @@ router.put('/:cid/product/:pid/:units', async (req, res) => {
 
 })
 
-router.delete('/:cid/product/:pid/:units', (req, res) => {
-    let cid = Number(req.params.cid) ?? null;
-    let pid = Number(req.params.pid) ?? null;
-    let quantity = Number(req.params.units) ?? null;
-    if (cid && pid && quantity) {
-        cartManager.deleteProduct(cid, pid, quantity);
-        return res.json({
-            status: 200,
-            response: `product (pid: ${pid}) deleted from cart (cid: ${cid})`
-        })
-    } else {
+router.delete('/:cid/product/:pid/:units', async (req, res) => {
+    try {
+        let cid = Number(req.params.cid) ?? null;
+        let pid = Number(req.params.pid) ?? null;
+        let quantity = Number(req.params.units) ?? null;
+        if (cid && pid && quantity) {
+            let cart = await cartManager.deleteProduct(cid, pid, quantity);
+            if (cart) {
+                return res.json({
+                    status: 200,
+                    response: `product (pid: ${pid}) deleted from cart (cid: ${cid})`
+                })
+            }
+        }
         return res.json({
             status: 400,
             response: 'check data'
+        })
+    } catch (error) {
+        console.log(error);
+        return res.json({
+            status: 500,
+            response: 'error'
         })
     }
 })

@@ -72,18 +72,23 @@ class CartManager {
     async addProduct(cid, pid, quantity) {
         try {
             let cart = this.getCartById(cid);
-            if (cart) {
-                let product = cart.products.find(each => each.pid === pid)
+            let stock_product = productManager.getProductById(pid);
+            if (cart && stock_product) {
+                let product = cart.products.find(each => each.pid === pid);
+                if (stock_product.stock < quantity) {
+                    quantity = stock_product.stock;
+                }
                 if (product) {
                     product.quantity += quantity;
                 } else {
                     cart.products.push({ pid, quantity })
                 }
+                let stock = stock_product.stock - quantity;
+                await productManager.updateProduct(pid, { stock });
                 let data_json = JSON.stringify(this.carts, null, 2);
                 await fs.promises.writeFile(this.path, data_json);
                 return cart;
             } else {
-                console.log('cart not found');
                 return undefined
             }
         } catch (error) {
@@ -95,19 +100,22 @@ class CartManager {
     async deleteProduct(cid, pid, quantity) {
         try {
             let cart = this.getCartById(cid);
-            if (cart) {
+            let stock_product = productManager.getProductById(pid);
+            if (cart && stock_product) {
                 let product = cart.products.find(each => each.pid === pid);
                 if (product && product.quantity > quantity) {
                     product.quantity -= quantity;
                 } else {
                     cart.products = cart.products.filter(each => each.pid !== pid);
+                    quantity = product.quantity;
                 }
+                let stock = stock_product.stock + quantity;
+                await productManager.updateProduct(pid, { stock });
                 let data_json = JSON.stringify(this.carts, null, 2);
                 await fs.promises.writeFile(this.path, data_json);
-                return;
+                return cart;
             } else {
-                console.log('cart not found');
-                return 'cart not found'
+                return undefined;
             }
         } catch (error) {
             console.log(error);
